@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer Evaluation - Class TG01</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="h-full bg-slate-50 text-slate-800 flex flex-col">
+
+    <header class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-indigo-600 p-2.5 rounded-xl font-bold shadow">
+                    <i class="fa-solid fa-users-viewfinder text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">PeerEval Portal</h1>
+                    <p class="text-xs text-indigo-200">Class TG01 Peer Evaluation System</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="nav-student-btn" onclick="switchMainTab('student')" class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-700 hover:bg-indigo-800 transition shadow-inner flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-user-graduate"></i> Student Portal
+                </button>
+                <button id="nav-instructor-btn" onclick="switchMainTab('instructor')" class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-500 hover:bg-indigo-600 transition flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-chalkboard-user"></i> Instructor Login
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+        
+        <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in duration-200">
+                <div class="flex items-center space-x-3 text-indigo-600">
+                    <i id="modal-icon" class="fa-solid fa-circle-info text-2xl"></i>
+                    <h3 id="modal-title" class="text-lg font-bold text-slate-900">Notification</h3>
+                </div>
+                <p id="modal-message" class="text-slate-600 text-sm"></p>
+                <div class="flex justify-end pt-2">
+                    <button onclick="closeModal()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition cursor-pointer">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="portal-student" class="space-y-6 max-w-3xl mx-auto">
+            
+            <!-- Login Card -->
+            <div id="student-login-card" class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900">Student Secure Login</h2>
+                    <p class="text-sm text-slate-500">Enter your official Student ID and exact Full Name registered in Class TG01.</p>
+                </div>
+
+                <form onsubmit="handleStudentLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Student ID</label>
+                        <input type="text" id="login-student-id" required placeholder="e.g. S101" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Full Name</label>
+                        <input type="text" id="login-student-name" required placeholder="e.g. Alice Johnson" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-right-to-bracket"></i> Login to Evaluate
+                    </button>
+                </form>
+            </div>
+
+            <!-- Evaluation Workspace -->
+            <div id="student-workspace" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-indigo-600 text-white p-3 rounded-xl">
+                            <i class="fa-solid fa-user-graduate text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-indigo-600 font-semibold uppercase">Logged in as (TG01):</p>
+                            <h3 id="workspace-student-name" class="text-lg font-bold text-slate-900"></h3>
+                            <p class="text-xs text-slate-500 font-mono">Team: <span id="workspace-student-team" class="font-semibold text-indigo-600"></span></p>
+                        </div>
+                    </div>
+                    <button onclick="studentLogout()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-medium transition flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+
+                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl text-indigo-900 text-sm flex items-start gap-3">
+                    <i class="fa-solid fa-circle-info text-indigo-600 mt-0.5 text-lg"></i>
+                    <div>
+                        <span class="font-semibold">Peer Evaluation Instructions:</span> Rate your team members' overall contribution score from 1 to 5 and provide constructive feedback comments. Teammate IDs are hidden for privacy.
+                    </div>
+                </div>
+
+                <form id="peer-eval-form" onsubmit="submitPeerEvaluation(event)" class="space-y-6">
+                    <div id="teammates-eval-container" class="space-y-6">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl transition shadow-md flex items-center justify-center gap-2 text-base cursor-pointer">
+                        <i class="fa-solid fa-paper-plane"></i> Save & Submit Peer Evaluations
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <div id="portal-instructor" class="space-y-6 hidden">
+            
+            <!-- Instructor PIN Gate -->
+            <div id="instructor-pin-card" class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 max-w-md mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900">Instructor Authentication</h2>
+                    <p class="text-sm text-slate-500">Enter instructor access PIN</p>
+                </div>
+
+                <form onsubmit="handleInstructorLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Instructor PIN</label>
+                        <input type="password" id="instructor-pin-input" required placeholder="Enter PIN" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-xl transition shadow-md cursor-pointer">
+                        Access Instructor Dashboard
+                    </button>
+                </form>
+            </div>
+
+            <!-- Instructor Dashboard Content -->
+            <div id="instructor-dashboard-content" class="space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Instructor Dashboard — Class TG01</h2>
+                        <p class="text-sm text-slate-500">Manage class roster, monitor contribution scores, and assign final marks.</p>
+                    </div>
+                    <button onclick="instructorLogout()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-medium transition cursor-pointer">
+                        <i class="fa-solid fa-lock mr-1.5"></i> Lock Dashboard
+                    </button>
+                </div>
+
+                <!-- Instructor Sub-Tabs -->
+                <div class="flex border-b border-slate-200 space-x-6">
+                    <button onclick="switchInstructorTab('roster')" id="tab-btn-roster" class="pb-3 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm transition cursor-pointer">
+                        <i class="fa-solid fa-address-book mr-2"></i> Class Roster & Upload
+                    </button>
+                    <button onclick="switchInstructorTab('evaluations')" id="tab-btn-evaluations" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-semibold text-sm transition cursor-pointer">
+                        <i class="fa-solid fa-chart-pie mr-2"></i> Evaluation Results & Grading
+                    </button>
+                </div>
+
+                <!-- Roster Tab Content -->
+                <div id="instructor-tab-roster" class="space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Add Student Form -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                            <h3 class="text-lg font-semibold text-slate-900"><i class="fa-solid fa-user-plus text-indigo-600 mr-2"></i> Add Single Student</h3>
+                            <form onsubmit="handleAddStudent(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Student ID</label>
+                                    <input type="text" id="new-student-id" required placeholder="e.g. S101" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Student Full Name</label>
+                                    <input type="text" id="new-student-name" required placeholder="e.g. Alice Johnson" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Team Name</label>
+                                    <input type="text" id="new-student-team" required placeholder="e.g. Team Alpha" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                </div>
+                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-sm cursor-pointer">
+                                    Add to TG01 Roster
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- CSV Upload & Sample Data -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4 lg:col-span-2 flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-slate-900"><i class="fa-solid fa-file-csv text-indigo-600 mr-2"></i> Bulk Upload Roster (CSV)</h3>
+                                <p class="text-sm text-slate-500">Upload a CSV file containing columns: <code class="bg-slate-100 text-indigo-600 px-1.5 py-0.5 rounded font-mono text-xs">id, name, team</code>.</p>
+                                
+                                <div class="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-indigo-500 transition bg-slate-50 cursor-pointer relative">
+                                    <input type="file" id="csv-file-input" accept=".csv" onchange="handleCSVUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-indigo-500 mb-2"></i>
+                                    <p class="text-sm font-medium text-slate-700">Click to upload CSV or drag and drop</p>
+                                    <p class="text-xs text-slate-400 mt-1">Format: Student ID, Full Name, Team</p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-3 pt-4 border-t border-slate-100 items-center justify-between">
+                                <button onclick="loadSampleRoster()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition cursor-pointer">
+                                    <i class="fa-solid fa-wand-magic-sparkles mr-1.5 text-amber-500"></i> Load Sample TG01 Roster
+                                </button>
+                                <button onclick="clearRoster()" class="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-medium rounded-xl transition cursor-pointer">
+                                    <i class="fa-solid fa-trash-can mr-1.5"></i> Clear Roster
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Roster Table -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+                            <h3 class="font-semibold text-slate-800"><i class="fa-solid fa-users mr-2 text-indigo-600"></i> TG01 Enrolled Students</h3>
+                            <span id="student-count-badge" class="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full font-semibold">0 Students</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-600 text-xs uppercase font-semibold">
+                                        <th class="px-6 py-3">Student ID</th>
+                                        <th class="px-6 py-3">Full Name</th>
+                                        <th class="px-6 py-3">Team</th>
+                                        <th class="px-6 py-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="roster-table-body" class="divide-y divide-slate-200 text-sm">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evaluations & Grading Tab Content -->
+                <div id="instructor-tab-evaluations" class="space-y-6 hidden">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-900"><i class="fa-solid fa-square-poll-vertical text-indigo-600 mr-2"></i> Contribution Scores & Grading</h3>
+                            <p class="text-sm text-slate-500">Review contribution ratings, read peer feedback comments, assign final team marks, and export CSV.</p>
+                        </div>
+                        <button onclick="exportResultsCSV()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-xl transition shadow-sm flex items-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-download"></i> Export Results CSV
+                        </button>
+                    </div>
+
+                    <div id="evaluations-container" class="space-y-6">
+                        <!-- Populated dynamically per team -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        let appData = {
+            students: [],
+            evaluations: [],
+            marks: {}
+        };
+
+        let currentStudent = null;
+        let instructorAuthenticated = false;
+        let instructorTab = 'roster';
+
+        window.onload = function() {
+            loadFromLocalStorage();
+            renderStudentPortal();
+        };
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('peereval_tg01_data');
+            if (saved) {
+                try {
+                    appData = JSON.parse(saved);
+                } catch(e) {
+                    console.error("Failed to parse saved data", e);
+                }
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('peereval_tg01_data', JSON.stringify(appData));
+        }
+
+        function switchMainTab(portal) {
+            const studentPortal = document.getElementById('portal-student');
+            const instructorPortal = document.getElementById('portal-instructor');
+            const studentBtn = document.getElementById('nav-student-btn');
+            const instructorBtn = document.getElementById('nav-instructor-btn');
+
+            if (portal === 'student') {
+                studentPortal.classList.remove('hidden');
+                instructorPortal.classList.add('hidden');
+                studentBtn.className = "px-4 py-2 text-sm font-medium rounded-lg bg-indigo-700 hover:bg-indigo-800 transition shadow-inner flex items-center gap-2 cursor-pointer";
+                instructorBtn.className = "px-4 py-2 text-sm font-medium rounded-lg bg-indigo-500 hover:bg-indigo-600 transition flex items-center gap-2 cursor-pointer";
+                renderStudentPortal();
+            } else {
+                studentPortal.classList.add('hidden');
+                instructorPortal.classList.remove('hidden');
+                instructorBtn.className = "px-4 py-2 text-sm font-medium rounded-lg bg-indigo-700 hover:bg-indigo-800 transition shadow-inner flex items-center gap-2 cursor-pointer";
+                studentBtn.className = "px-4 py-2 text-sm font-medium rounded-lg bg-indigo-500 hover:bg-indigo-600 transition flex items-center gap-2 cursor-pointer";
+                renderInstructorPortal();
+            }
+        }
+
+        function handleStudentLogin(e) {
+            e.preventDefault();
+            const id = document.getElementById('login-student-id').value.trim();
+            const name = document.getElementById('login-student-name').value.trim();
+
+            const student = appData.students.find(s => s.id.toLowerCase() === id.toLowerCase() && s.name.toLowerCase() === name.toLowerCase());
+
+            if (!student) {
+                showModal("Login Failed", "Student ID and Name combination not found in Class TG01 roster. Please check with your instructor.");
+                return;
+            }
+
+            currentStudent = student;
+            document.getElementById('login-student-id').value = '';
+            document.getElementById('login-student-name').value = '';
+            renderStudentPortal();
+        }
+
+        function studentLogout() {
+            currentStudent = null;
+            renderStudentPortal();
+        }
+
+        function renderStudentPortal() {
+            const loginCard = document.getElementById('student-login-card');
+            const workspace = document.getElementById('student-workspace');
+
+            if (!currentStudent) {
+                loginCard.classList.remove('hidden');
+                workspace.classList.add('hidden');
+                return;
+            }
+
+            loginCard.classList.add('hidden');
+            workspace.classList.remove('hidden');
+
+            document.getElementById('workspace-student-name').innerText = currentStudent.name;
+            document.getElementById('workspace-student-team').innerText = currentStudent.team;
+
+            const teammates = appData.students.filter(s => s.team === currentStudent.team && s.id !== currentStudent.id);
+            const container = document.getElementById('teammates-eval-container');
+
+            if (teammates.length === 0) {
+                container.innerHTML = `<div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-800 text-sm">There are no other members in your team yet. Your instructor may still be updating rosters.</div>`;
+                return;
+            }
+
+            const existingEvals = appData.evaluations.filter(ev => ev.evaluatorId === currentStudent.id);
+
+            let html = `<h3 class="font-bold text-slate-900 text-lg border-b border-slate-200 pb-2">Rate Teammates in ${escapeHtml(currentStudent.team)}</h3>`;
+
+            teammates.forEach((tm, idx) => {
+                const prevEval = existingEvals.find(ev => ev.evaluateeId === tm.id) || { contribScore: 5, comments: '' };
+
+                // Security adjustment: Showing ONLY NAME, hiding teammate ID completely
+                html += `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h4 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-user text-indigo-600 mr-2"></i> ${escapeHtml(tm.name)}</h4>
+                            <span class="text-xs font-medium bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">Teammate #${idx + 1}</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Contribution Score (1 to 5)</label>
+                            <select name="contrib_${idx}" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white font-medium cursor-pointer">
+                                <option value="5" ${prevEval.contribScore == 5 ? 'selected' : ''}>5 - Outstanding Contribution</option>
+                                <option value="4" ${prevEval.contribScore == 4 ? 'selected' : ''}>4 - Very Good Contribution</option>
+                                <option value="3" ${prevEval.contribScore == 3 ? 'selected' : ''}>3 - Satisfactory Contribution</option>
+                                <option value="2" ${prevEval.contribScore == 2 ? 'selected' : ''}>2 - Needs Improvement</option>
+                                <option value="1" ${prevEval.contribScore == 1 ? 'selected' : ''}>1 - Unsatisfactory Contribution</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Constructive Comments</label>
+                            <textarea name="comments_${idx}" rows="2" placeholder="Provide feedback for this teammate..." class="w-full border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">${escapeHtml(prevEval.comments || '')}</textarea>
+                        </div>
+                        <input type="hidden" name="evaluatee_id_${idx}" value="${tm.id}">
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function submitPeerEvaluation(e) {
+            e.preventDefault();
+            if (!currentStudent) return;
+
+            const teammates = appData.students.filter(s => s.team === currentStudent.team && s.id !== currentStudent.id);
+
+            appData.evaluations = appData.evaluations.filter(ev => ev.evaluatorId !== currentStudent.id);
+
+            teammates.forEach((tm, idx) => {
+                const contribScore = document.querySelector(`[name="contrib_${idx}"]`).value;
+                const comments = document.querySelector(`[name="comments_${idx}"]`).value;
+
+                appData.evaluations.push({
+                    evaluatorId: currentStudent.id,
+                    evaluateeId: tm.id,
+                    team: currentStudent.team,
+                    contribScore: parseInt(contribScore),
+                    comments,
+                    timestamp: new Date().toISOString()
+                });
+            });
+
+            saveToLocalStorage();
+            showModal("Success", "Your peer contribution evaluations for Class TG01 were successfully submitted!");
+        }
+
+        function handleInstructorLogin(e) {
+            e.preventDefault();
+            const pin = document.getElementById('instructor-pin-input').value.trim();
+            if (pin === "1234") {
+                instructorAuthenticated = true;
+                document.getElementById('instructor-pin-input').value = '';
+                renderInstructorPortal();
+            } else {
+                showModal("Access Denied", "Incorrect instructor PIN.");
+            }
+        }
+
+        function instructorLogout() {
+            instructorAuthenticated = false;
+            renderInstructorPortal();
+        }
+
+        function switchInstructorTab(tab) {
+            instructorTab = tab;
+            const rosterBtn = document.getElementById('tab-btn-roster');
+            const evalBtn = document.getElementById('tab-btn-evaluations');
+            const rosterDiv = document.getElementById('instructor-tab-roster');
+            const evalDiv = document.getElementById('instructor-tab-evaluations');
+
+            if (tab === 'roster') {
+                rosterBtn.className = "pb-3 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm transition cursor-pointer";
+                evalBtn.className = "pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-semibold text-sm transition cursor-pointer";
+                rosterDiv.classList.remove('hidden');
+                evalDiv.classList.add('hidden');
+            } else {
+                evalBtn.className = "pb-3 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm transition cursor-pointer";
+                rosterBtn.className = "pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-semibold text-sm transition cursor-pointer";
+                evalDiv.classList.remove('hidden');
+                rosterDiv.classList.add('hidden');
+                renderEvaluationsTab();
+            }
+        }
+
+        function renderInstructorPortal() {
+            const pinCard = document.getElementById('instructor-pin-card');
+            const dashContent = document.getElementById('instructor-dashboard-content');
+
+            if (!instructorAuthenticated) {
+                pinCard.classList.remove('hidden');
+                dashContent.classList.add('hidden');
+                return;
+            }
+
+            pinCard.classList.add('hidden');
+            dashContent.classList.remove('hidden');
+
+            renderRosterTable();
+            if (instructorTab === 'evaluations') {
+                renderEvaluationsTab();
+            }
+        }
+
+        function renderRosterTable() {
+            const students = appData.students;
+            document.getElementById('student-count-badge').innerText = `${students.length} Students`;
+            const tbody = document.getElementById('roster-table-body');
+
+            if (students.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400">No students added to Class TG01 yet. Upload a CSV, add manually, or load sample data.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            students.forEach((s, idx) => {
+                html += `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="px-6 py-3 font-mono font-medium text-slate-700">${escapeHtml(s.id)}</td>
+                        <td class="px-6 py-3 font-medium text-slate-900">${escapeHtml(s.name)}</td>
+                        <td class="px-6 py-3"><span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md text-xs font-semibold">${escapeHtml(s.team)}</span></td>
+                        <td class="px-6 py-3 text-right">
+                            <button onclick="deleteStudent(${idx})" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 transition cursor-pointer" title="Delete Student">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function handleAddStudent(e) {
+            e.preventDefault();
+            const id = document.getElementById('new-student-id').value.trim();
+            const name = document.getElementById('new-student-name').value.trim();
+            const team = document.getElementById('new-student-team').value.trim();
+
+            if (!id || !name || !team) return;
+
+            if (appData.students.some(s => s.id === id)) {
+                showModal("Duplicate ID", `Student with ID ${id} already exists in Class TG01.`);
+                return;
+            }
+
+            appData.students.push({ id, name, team });
+            saveToLocalStorage();
+            renderRosterTable();
+
+            document.getElementById('new-student-id').value = '';
+            document.getElementById('new-student-name').value = '';
+            document.getElementById('new-student-team').value = '';
+            showModal("Success", "Student added to TG01 successfully.");
+        }
+
+        function deleteStudent(index) {
+            appData.students.splice(index, 1);
+            saveToLocalStorage();
+            renderRosterTable();
+        }
+
+        function clearRoster() {
+            if (confirm("Are you sure you want to clear all students and evaluations for Class TG01?")) {
+                appData.students = [];
+                appData.evaluations = [];
+                appData.marks = {};
+                saveToLocalStorage();
+                renderRosterTable();
+            }
+        }
+
+        function loadSampleRoster() {
+            appData.students = [
+                { id: "S101", name: "Alice Johnson", team: "Team Alpha" },
+                { id: "S102", name: "Bob Smith", team: "Team Alpha" },
+                { id: "S103", name: "Charlie Davis", team: "Team Alpha" },
+                { id: "S104", name: "Diana Prince", team: "Team Beta" },
+                { id: "S105", name: "Ethan Hunt", team: "Team Beta" },
+                { id: "S106", name: "Fiona Gallagher", team: "Team Beta" }
+            ];
+            saveToLocalStorage();
+            renderRosterTable();
+            showModal("Sample Data Loaded", "Loaded 6 sample students for Class TG01.");
+        }
+
+        function handleCSVUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                parseCSV(e.target.result);
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(text) {
+            const lines = text.split(/\r\n|\n/);
+            let addedCount = 0;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+                if (cols.length >= 3) {
+                    if (i === 0 && (cols[0].toLowerCase() === 'id' || cols[0].toLowerCase() === 'student id')) continue;
+                    const [id, name, team] = cols;
+                    if (id && name && team) {
+                        if (!appData.students.some(s => s.id === id)) {
+                            appData.students.push({ id, name, team });
+                            addedCount++;
+                        }
+                    }
+                }
+            }
+
+            saveToLocalStorage();
+            renderRosterTable();
+            showModal("CSV Upload Complete", `Successfully imported ${addedCount} students into TG01.`);
+        }
+
+        function renderEvaluationsTab() {
+            const container = document.getElementById('evaluations-container');
+            const students = appData.students;
+
+            if (students.length === 0) {
+                container.innerHTML = `<div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center text-slate-400">No students enrolled in Class TG01.</div>`;
+                return;
+            }
+
+            const teams = {};
+            students.forEach(s => {
+                if (!teams[s.team]) teams[s.team] = [];
+                teams[s.team].push(s);
+            });
+
+            let html = '';
+            for (const [teamName, teamStudents] of Object.entries(teams)) {
+                const teamMark = appData.marks[teamName] !== undefined ? appData.marks[teamName] : '';
+
+                html += `
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-slate-100/70 px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-people-group text-indigo-600 mr-2"></i> ${escapeHtml(teamName)}</h4>
+                                <p class="text-xs text-slate-500">${teamStudents.length} Members</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label class="text-xs font-semibold uppercase text-slate-600">Assigned Team Mark:</label>
+                                <input type="number" min="0" max="100" step="0.5" value="${teamMark}" onchange="updateTeamMark('${escapeHtml(teamName)}', this.value)" placeholder="e.g. 92" class="w-24 border border-slate-300 rounded-xl px-3 py-1.5 text-sm font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                            </div>
+                        </div>
+
+                        <div class="p-6 space-y-6">
+                `;
+
+                teamStudents.forEach(student => {
+                    const receivedEvals = appData.evaluations.filter(ev => ev.evaluateeId === student.id);
+                    
+                    let avgContrib = 0;
+                    if (receivedEvals.length > 0) {
+                        avgContrib = (receivedEvals.reduce((a, c) => a + parseInt(c.contribScore), 0) / receivedEvals.length).toFixed(1);
+                    }
+
+                    html += `
+                        <div class="border border-slate-200 rounded-xl p-4 space-y-3 bg-slate-50/50">
+                            <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                                <div>
+                                    <h5 class="font-bold text-slate-900">${escapeHtml(student.name)} <span class="text-xs font-normal text-slate-500 font-mono">(${escapeHtml(student.id)})</span></h5>
+                                </div>
+                                <span class="bg-indigo-50 text-indigo-700 text-xs px-2.5 py-1 rounded-md font-semibold">Evals Received: ${receivedEvals.length}</span>
+                            </div>
+                    `;
+
+                    if (receivedEvals.length === 0) {
+                        html += `<p class="text-xs text-slate-400 italic">No peer evaluations received yet.</p>`;
+                    } else {
+                        html += `
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 uppercase font-semibold">Average Contribution Score</span>
+                                <span class="text-xl font-bold text-indigo-600">${avgContrib} <span class="text-xs text-slate-400 font-normal">/ 5.0</span></span>
+                            </div>
+
+                            <div class="space-y-2 pt-2">
+                                <p class="text-xs font-semibold uppercase text-slate-500">Peer Comments:</p>
+                                <div class="space-y-2">
+                        `;
+
+                        receivedEvals.forEach(ev => {
+                            html += `
+                                <div class="bg-white p-3 rounded-xl border border-slate-200 text-sm space-y-1">
+                                    <div class="flex justify-between text-xs text-slate-400">
+                                        <span>Contribution Score: <strong>${ev.contribScore}/5</strong></span>
+                                        <span>${new Date(ev.timestamp).toLocaleDateString()}</span>
+                                    </div>
+                                    <p class="text-slate-700 italic">"${escapeHtml(ev.comments || 'No comment.')}"</p>
+                                </div>
+                            `;
+                        });
+
+                        html += `</div></div>`;
+                    }
+
+                    html += `</div>`;
+                });
+
+                html += `</div></div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function updateTeamMark(teamName, value) {
+            appData.marks[teamName] = value;
+            saveToLocalStorage();
+        }
+
+        function exportResultsCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Student ID,Student Name,Team,Assigned Team Mark,Average Contribution Score,Total Evals Received\n";
+
+            appData.students.forEach(student => {
+                const receivedEvals = appData.evaluations.filter(ev => ev.evaluateeId === student.id);
+                let avgContrib = 0;
+                if (receivedEvals.length > 0) {
+                    avgContrib = (receivedEvals.reduce((a, c) => a + parseInt(c.contribScore), 0) / receivedEvals.length).toFixed(1);
+                }
+                const mark = appData.marks[student.team] !== undefined ? appData.marks[student.team] : '';
+                csvContent += `"${student.id}","${student.name}","${student.team}","${mark}","${avgContrib}","${receivedEvals.length}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `TG01_Peer_Evaluation_Results.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function showModal(title, message) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&#039;');
+        }
+    </script>
+</body>
+</html>
