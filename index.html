@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peer Evaluation - Class TG01</title>
+    <title>Peer Evaluation - Class TG01, TG03, TG05</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight">PeerEval Portal</h1>
-                    <p class="text-xs text-indigo-200">Class TG01 Peer Evaluation System</p>
+                    <p class="text-xs text-indigo-200">Class TG01,TG03, TG05 Peer Evaluation System</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -59,7 +59,7 @@
                         <i class="fa-solid fa-lock"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-slate-900">Student Secure Login</h2>
-                    <p class="text-sm text-slate-500">Enter your official Student ID and exact Full Name registered in Class TG01.</p>
+                    <p class="text-sm text-slate-500">Enter your official Student ID and exact Full Name registered in Class TG01, TG03, TG05.</p>
                 </div>
 
                 <form onsubmit="handleStudentLogin(event)" class="space-y-4">
@@ -85,7 +85,7 @@
                             <i class="fa-solid fa-user-graduate text-xl"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-indigo-600 font-semibold uppercase">Logged in as (TG01):</p>
+                            <p class="text-xs text-indigo-600 font-semibold uppercase">Logged in as (TG01, TG03, TG05):</p>
                             <h3 id="workspace-student-name" class="text-lg font-bold text-slate-900"></h3>
                             <p class="text-xs text-slate-500 font-mono">Team: <span id="workspace-student-team" class="font-semibold text-indigo-600"></span></p>
                         </div>
@@ -142,7 +142,7 @@
             <div id="instructor-dashboard-content" class="space-y-6 hidden">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Instructor Dashboard — Class TG01</h2>
+                        <h2 class="text-2xl font-bold text-slate-900">Instructor Dashboard — Class TG01, TG03, TG05</h2>
                         <p class="text-sm text-slate-500">Manage class roster, monitor contribution scores, and assign final marks.</p>
                     </div>
                     <button onclick="instructorLogout()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-medium transition cursor-pointer">
@@ -180,7 +180,7 @@
                                     <input type="text" id="new-student-team" required placeholder="e.g. Team Alpha" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                                 </div>
                                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-sm cursor-pointer">
-                                    Add to TG01 Roster
+                                    Add to TG01,TG03, TG05 Roster
                                 </button>
                             </form>
                         </div>
@@ -201,7 +201,7 @@
 
                             <div class="flex flex-wrap gap-3 pt-4 border-t border-slate-100 items-center justify-between">
                                 <button onclick="loadSampleRoster()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition cursor-pointer">
-                                    <i class="fa-solid fa-wand-magic-sparkles mr-1.5 text-amber-500"></i> Load Sample TG01 Roster
+                                    <i class="fa-solid fa-wand-magic-sparkles mr-1.5 text-amber-500"></i> Load Sample TG01,TG03, TG05 Roster
                                 </button>
                                 <button onclick="clearRoster()" class="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-medium rounded-xl transition cursor-pointer">
                                     <i class="fa-solid fa-trash-can mr-1.5"></i> Clear Roster
@@ -213,7 +213,7 @@
                     <!-- Roster Table -->
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                         <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
-                            <h3 class="font-semibold text-slate-800"><i class="fa-solid fa-users mr-2 text-indigo-600"></i> TG01 Enrolled Students</h3>
+                            <h3 class="font-semibold text-slate-800"><i class="fa-solid fa-users mr-2 text-indigo-600"></i> TG01-TG05 Enrolled Students</h3>
                             <span id="student-count-badge" class="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full font-semibold">0 Students</span>
                         </div>
                         <div class="overflow-x-auto">
@@ -274,7 +274,7 @@
         };
 
         function loadFromLocalStorage() {
-            const saved = localStorage.getItem('peereval_tg01_data');
+            const saved = localStorage.getItem('peereval_tg010305_data');
             if (saved) {
                 try {
                     appData = JSON.parse(saved);
@@ -285,7 +285,7 @@
         }
 
         function saveToLocalStorage() {
-            localStorage.setItem('peereval_tg01_data', JSON.stringify(appData));
+            localStorage.setItem('peereval_tg010305_data', JSON.stringify(appData));
         }
 
         function switchMainTab(portal) {
@@ -314,10 +314,10 @@
             const id = document.getElementById('login-student-id').value.trim();
             const name = document.getElementById('login-student-name').value.trim();
 
-            const student = appData.students.find(s => s.id.toLowerCase() === id.toLowerCase() && s.name.toLowerCase() === name.toLowerCase());
+            const student = appData.students.find(s => s.id.toLowerCase() === id.toLowerCase());
 
             if (!student) {
-                showModal("Login Failed", "Student ID and Name combination not found in Class TG01 roster. Please check with your instructor.");
+                showModal("Login Failed", "Student ID and Name combination not found in Class TG01,TG03,TG05 roster. Please check with your instructor.");
                 return;
             }
 
@@ -417,7 +417,8 @@
             });
 
             saveToLocalStorage();
-            showModal("Success", "Your peer contribution evaluations for Class TG01 were successfully submitted!");
+            showModal("Success", "Your peer contribution evaluations for your teammates were successfully submitted!");
+	    studentLogout();
         }
 
         function handleInstructorLogin(e) {
